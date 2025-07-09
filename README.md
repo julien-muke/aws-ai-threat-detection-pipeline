@@ -4,11 +4,11 @@
 
   <br />
     <a href="https://youtu.be/o4fNDCAqyzM" target="_blank">
-      <img src="https://github.com/user-attachments/assets/9692b53b-d569-4f6b-a959-39a4dac923a0" alt="Project Banner">
+      <img src="https://github.com/user-attachments/assets/20b36884-c4ef-4d0e-8add-200cb2d378d9" alt="Project Banner">
     </a>
   <br />
 
-<h3 align="center">Serverless Image Analysis on AWS Using Bedrock, Rekognition & IaC with Terraform</h3>
+<h3 align="center">🚨 Real-time AI-powered threat detection and response system on AWS using GuardDuty, SNS, and Lambda. </h3>
 
    <div align="center">
      Build this hands-on demo step by step with my detailed tutorial on <a href="http://www.youtube.com/@julienmuke/videos" target="_blank"><b>Julien Muke</b></a> YouTube. Feel free to subscribe 🔔!
