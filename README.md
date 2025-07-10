@@ -1,4 +1,4 @@
-# ![aws](https://github.com/julien-muke/Search-Engine-Website-using-AWS/assets/110755734/01cd6124-8014-4baa-a5fe-bd227844d263) Real-Time Threat Detection on AWS with AI | GuardDuty, CloudTrail, Lambda & SNS
+# ![aws](https://github.com/julien-muke/Search-Engine-Website-using-AWS/assets/110755734/01cd6124-8014-4baa-a5fe-bd227844d263) Real-Time Threat Detection on AWS with AI | GuardDuty, CloudTrail, Lambda & SNS 🛡️
 
 <div align="center">
 
@@ -33,32 +33,49 @@ In this hands-on project, we'll build a real-time AI-powered threat detection an
 
 This project showcases a real-time AI-powered security pipeline using:
 
-- ✅ Amazon GuardDuty (threat detection)
-- ✅ Amazon EventBridge (routing)
+- ✅ Amazon CloudTrail (log API activity)
+- ✅ Amazon GuardDuty (AI-based threat detection)
+- ✅ Amazon EventBridge (trigger on GuardDuty findings)
 - ✅ AWS Lambda (automated response)
-- ✅ Amazon SNS (alert notifications)
+- ✅ Amazon SNS (send real-time email/SMS alerts)
 
 
-Simulated GuardDuty findings (like `Trojan:EC2/BlackholeTraffic`) trigger SNS alerts and a Lambda function that sends a clean, human-readable security alert.
+Simulated GuardDuty findings, trigger SNS alerts and a Lambda function that sends a clean, human-readable security alert.
+
+## 🔧 Prerequisites
+
+✅ An AWS account
+✅ AWS CLI configured
+✅ IAM permissions to create: CloudTrail, GuardDuty, SNS, EventBridge, Lambda
+✅ Optional: VPN or proxy to simulate foreign IP access
 
 
-## ➡️ Step 1 - Project Structure
+## ➡️ Step 1 - Enable CloudTrail
 
-First, let's organize our project files. Create a main directory for your project, and inside it, create the following structure:
+Amazon CloudTrail records all AWS API calls and activity in your account. GuardDuty analyzes these logs.
 
-    ai-image-recognition-terraform/
-    ├── terraform/
-    │   ├── main.tf
-    │   ├── variables.tf
-    │   └── outputs.tf
-    ├── lambda/
-    │   └── image_analyzer.py
-    └── frontend/
-        ├── index.html
-        ├── style.css
-        └── script.js
+How to do it:
 
-## ➡️ Step 2 - Backend Development with Python and Lambda
+1. Go to the CloudTrail console
+2. If it’s not already enabled: Click “Create trail”
+3. Choose “Management events” → enable Read and Write events
+4. Choose to log to an S3 bucket (create a new one if needed)
+5. Leave Data events and Insights off (not needed here)
+6. Click “Create trail”
+
+✅ Now your account logs all actions taken by users, roles, and services.
+
+## ➡️ Step 2 - Enable Amazon GuardDuty
+
+Amazon GuardDuty will analyze CloudTrail, DNS, VPC Flow Logs, and more using ML + threat intel to detect suspicious behavior.
+
+How to do it:
+
+1. Go to the GuardDuty console
+2. Click “Enable GuardDuty”
+3. Wait 5–10 mins — it starts analyzing logs.
+
+✅ GuardDuty is now scanning your account for threats like credential theft, unusual login behavior, port scanning, and more.
 
 We'll start by writing the Python code for our Lambda function. This function will be the brains of our operation.
 
