@@ -181,273 +181,47 @@ Isolate or stop the EC2 instance and investigate for malware or unauthorized tra
 ```
 </details>
 
-Here is some CSS to make the interface look professional and modern.
+- Configure Environment Variables:
 
-<details>
-<summary><code>frontend/style.css</code></summary>
+1. In your Lambda function's configuration, go to the Environment variables tab and click Edit.
+2. Add a new variable:
+<br>• Key: `SNS_TOPIC_ARN`
+<br>• Value: Paste the ARN of the SNS topic you created in Step 2.
 
-```css
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
 
-body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f0f2f5;
-    color: #333;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
+## ➡️ Step 5 - Integrate Services with Amazon EventBridge
 
-.container {
-    width: 100%;
-    max-width: 800px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    box-sizing: border-box;
-}
+Now, we'll create an EventBridge rule to trigger our Lambda function and send a notification when GuardDuty detects a specific type of threat.
 
-header {
-    text-align: center;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 20px;
-    margin-bottom: 30px;
-}
+1. Go to the Amazon EventBridge console.
+2. In the left navigation pane, click Rules, then Create rule.
+3. Name: GuardDuty-IAM-Threat-Rule
+4. Event bus: default
+5. Rule type: Rule with an event pattern
+6. Click Next.
+7. Event source: AWS events or EventBridge partner events
+8. Event pattern:
 
-header h1 {
-    color: #1a73e8;
-    margin: 0;
-}
+<br>• Event source: AWS services
+<br>• AWS service: GuardDuty
+<br>• Event type: GuardDuty Finding
 
-.upload-area {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-#imageUpload {
-    display: none;
-}
-
-#uploadLabel {
-    display: block;
-    padding: 30px;
-    border: 2px dashed #1a73e8;
-    border-radius: 8px;
-    cursor: pointer;
-    background-color: #f8f9fa;
-    margin-bottom: 20px;
-    transition: background-color 0.3s;
-}
-
-#uploadLabel:hover {
-    background-color: #e8f0fe;
-}
-
-#uploadLabel span {
-    font-size: 1.2em;
-    font-weight: 500;
-}
-
-#analyzeBtn {
-    background-color: #1a73e8;
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background-color 0.3s, box-shadow 0.3s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-#analyzeBtn:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-#analyzeBtn:not(:disabled):hover {
-    background-color: #155ab6;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-
-#preview {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-#imagePreview {
-    max-width: 100%;
-    max-height: 400px;
-    border-radius: 8px;
-    display: none;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-#results {
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 20px;
-}
-
-#results.hidden {
-    display: none;
-}
-
-#resultContent {
-    display: none;
-}
-
-#description {
-    font-size: 1.1em;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    font-style: italic;
-    color: #555;
-}
-
-#labels {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.label-tag {
-    background-color: #e8f0fe;
-    color: #1a73e8;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-size: 0.9em;
-    font-weight: 500;
-}
-
-.loader {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #1a73e8;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 20px auto;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-footer {
-    text-align: center;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #e0e0e0;
-    font-size: 0.9em;
-    color: #888;
+```json
+{
+  "source": ["aws.guardduty"],
+  "detail-type": ["GuardDuty Finding"],
+  "detail": {
+    "type": ["Trojan:EC2/BlackholeTraffic"]
+  }
 }
 ```
-</details>
-
-This JavaScript file handles the logic for image preview, converting the image to base64, calling the API, and displaying the results.
-
-<details>
-<summary><code>frontend/script.js</code></summary>
-
-```js
-document.addEventListener('DOMContentLoaded', () => {
-    const imageUpload = document.getElementById('imageUpload');
-    const uploadLabel = document.getElementById('uploadLabel');
-    const analyzeBtn = document.getElementById('analyzeBtn');
-    const imagePreview = document.getElementById('imagePreview');
-    const previewContainer = document.getElementById('preview');
-    const resultsContainer = document.getElementById('results');
-    const loader = document.getElementById('loader');
-    const resultContent = document.getElementById('resultContent');
-    const descriptionEl = document.getElementById('description');
-    const labelsEl = document.getElementById('labels');
-
-    const API_ENDPOINT = 'YOUR_API_GATEWAY_INVOKE_URL'; // <-- IMPORTANT: REPLACE THIS
-
-    let base64Image = null;
-
-    imageUpload.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            // Display image preview
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                imagePreview.src = e.target.result;
-                imagePreview.style.display = 'block';
-                uploadLabel.querySelector('span').textContent = file.name;
-                analyzeBtn.disabled = false;
-            };
-            reader.readAsDataURL(file);
-
-            // Convert image to base64 for sending to API
-            const readerForBase64 = new FileReader();
-            readerForBase64.onload = (e) => {
-                // Remove the data URL prefix (e.g., "data:image/jpeg;base64,")
-                base64Image = e.target.result.split(',')[1];
-            };
-            readerForBase64.readAsDataURL(file);
-        }
-    });
-
-    analyzeBtn.addEventListener('click', async () => {
-        if (!base64Image || API_ENDPOINT === 'YOUR_API_GATEWAY_INVOKE_URL') {
-            alert('Please select an image first or configure the API endpoint in script.js.');
-            return;
-        }
-
-        // Show loader and results section
-        resultsContainer.classList.remove('hidden');
-        loader.style.display = 'block';
-        resultContent.style.display = 'none';
-        descriptionEl.textContent = '';
-        labelsEl.innerHTML = '';
-
-        try {
-            const response = await fetch(API_ENDPOINT, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ image: base64Image }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            // Display results
-            descriptionEl.textContent = data.description;
-            data.labels.forEach(label => {
-                const labelTag = document.createElement('div');
-                labelTag.className = 'label-tag';
-                labelTag.textContent = label;
-                labelsEl.appendChild(labelTag);
-            });
-
-        } catch (error) {
-            console.error('Error:', error);
-            descriptionEl.textContent = `An error occurred: ${error.message}`;
-        } finally {
-            // Hide loader and show content
-            loader.style.display = 'none';
-            resultContent.style.display = 'block';
-        }
-    });
-});
-```
-</details>
-
-
-## ➡️ Step 5 - Deployment and Testing
+9. Click Next.
+10. Select a target:
+<br>• Target 1:
+      <br>• Target types: AWS service
+      <br>• Select a target: Lambda function
+      <br>• Function: Select the `GuardDuty-Automated-Response` function.
+<br> Add another target:
 
 Now it's time to bring everything online.
 
