@@ -44,10 +44,10 @@ Simulated GuardDuty findings, trigger SNS alerts and a Lambda function that send
 
 ## 🔧 Prerequisites
 
-✅ An AWS account
-✅ AWS CLI configured
-✅ IAM permissions to create: CloudTrail, GuardDuty, SNS, EventBridge, Lambda
-✅ Optional: VPN or proxy to simulate foreign IP access
+✅ An AWS account<br>
+✅ AWS CLI configured<br>
+✅ IAM permissions to create: CloudTrail, GuardDuty, SNS, EventBridge, Lambda<br>
+✅ Optional: VPN or proxy to simulate foreign IP access<br>
 
 
 ## ➡️ Step 1 - Enable CloudTrail
