@@ -84,423 +84,100 @@ Next, we'll create an SNS topic to send alerts to your security team.
 How to do it:
 
 1. Go to the Amazon SNS console.
-2.In the left navigation pane, click Topics, then Create topic.
-
-Choose the Standard type.
-Give your topic a name (e.g., GuardDuty-Threat-Alerts).
-
-Scroll down and click Create topic.
-
-Once the topic is created, you need to create a subscription. Click Create subscription.
-
-For Protocol, choose Email (or another preferred method).
-
-For Endpoint, enter the email address of your security team.
-
-Click Create subscription.
+2. In the left navigation pane, click Topics, then Create topic.
+3. Choose the Standard type.
+4. Give your topic a name `GuardDuty-Threat-Alerts`
+5. Scroll down and click Create topic.
+6. Once the topic is created, you need to create a subscription. Click Create subscription.
+7. For Protocol, choose Email (or another preferred method).
+8. For Endpoint, enter the email address of your security team.
+9. Click Create subscription.
 
 
+## ➡️ Step 4 - Create a Lambda Function - Our Alert Processor
 
-Now, let's define all the AWS resources needed for our backend using Terraform.
+We'll create a Lambda function that takes the complicated JSON output from GuardDuty and turns it into a simple message.
 
-Define some variables to make your configuration reusable.
+- Create the Lambda IAM Role:
 
-<details>
-<summary><code>terraform/variables.tf</code></summary>
+Go to the IAM console and create a new role:
+1. For the trusted entity, select AWS service, and for the use case, choose Lambda.
+2. On the permissions screen, add the `AWSLambdaBasicExecutionRole` policy. This allows our function to write logs to CloudWatch, which is essential for debugging.
+3. Name the role something like `GuardDuty-Lambda-Role` and create it.
 
-```tf
-variable "aws_region" {
-  description = "The AWS region to deploy resources in."
-  type        = string
-  default     = "us-east-1"
-}
+- Create the Lambda Function:
 
-variable "project_name" {
-  description = "A unique name for the project to prefix resources."
-  type        = string
-  default     = "ai-image-analyzer"
-}
+1. Go to the Lambda console and click Create function.
+2. Select Author from scratch.
+3. Function name: `GuardDuty-Automated-Response`
+4. Runtime: Python `3.9`
+5. Architecture: `x86_64`
+6. Permissions: Choose Use an existing role and select the IAM role you just created.
+7. Click Create function.
 
-variable "environment" {
-  description = "Deployment environment (e.g., dev, staging, prod)."
-  type        = string
-  default     = "dev"
-}
-```
-</details>
-
-This is the main configuration file where we define all our resources.
+Now, let's paste in our Python code. This code will parse the GuardDuty finding, pull out the most important details, and format a clean message.
 
 <details>
-<summary><code>terraform/main.tf</code></summary>
+<summary><code>GuardDuty-Automated-Response.py</code></summary>
 
-```tf
-# ==============================================================================
-# Provider Configuration
-# ==============================================================================
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
+```python
+import boto3
+import json
+import os
+from datetime import datetime
 
-provider "aws" {
-  region = var.aws_region
-}
+sns = boto3.client('sns')
 
-# ==============================================================================
-# IAM Role and Policies for Lambda
-# ==============================================================================
-resource "aws_iam_role" "lambda_exec_role" {
-  name = "${var.project_name}-lambda-exec-role"
+def lambda_handler(event, context):
+    try:
+        detail = event["detail"]
+        instance_id = detail["resource"]["instanceDetails"]["instanceId"]
+        public_ip = detail["resource"]["instanceDetails"]["networkInterfaces"][0]["publicIp"]
+        finding_type = detail["type"]
+        region = detail["region"]
+        description = detail["description"]
+        time = detail["service"]["eventFirstSeen"]
+        profile = detail["resource"]["instanceDetails"]["iamInstanceProfile"]["arn"]
+        remote_ip = detail["service"]["action"]["networkConnectionAction"]["remoteIpDetails"]["ipAddressV4"]
+        remote_port = detail["service"]["action"]["networkConnectionAction"]["remotePortDetails"]["port"]
+        
+        readable_message = f"""
+🚨 GuardDuty Alert: Trojan Activity Detected
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Action = "sts:AssumeRole",
-      Effect = "Allow",
-      Principal = {
-        Service = "lambda.amazonaws.com"
-      }
-    }]
-  })
-}
+🔍 Type: {finding_type}
+💡 Description: {description}
 
-resource "aws_iam_policy" "lambda_logging_policy" {
-  name        = "${var.project_name}-lambda-logging-policy"
-  description = "IAM policy for Lambda to write logs to CloudWatch"
+🖥 Instance ID: {instance_id}
+🔐 Instance Profile: {profile}
+🌐 Public IP: {public_ip}
+➡️ Remote IP: {remote_ip}:{remote_port}
+📍 Region: {region}
+🕒 Time: {datetime.strptime(time, "%Y-%m-%dT%H:%M:%S.%fZ").strftime('%Y-%m-%d %H:%M:%S')} UTC
 
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Action = [
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents"
-      ],
-      Effect   = "Allow",
-      Resource = "arn:aws:logs:*:*:*"
-    }]
-  })
-}
+🧠 Recommendation:
+Isolate or stop the EC2 instance and investigate for malware or unauthorized traffic.
 
-resource "aws_iam_policy" "lambda_ai_services_policy" {
-  name        = "${var.project_name}-ai-services-policy"
-  description = "IAM policy for Lambda to access Rekognition and Bedrock"
+📘 Learn more: https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings.html
+"""
 
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action   = "rekognition:DetectLabels",
-        Effect   = "Allow",
-        Resource = "*"
-      },
-      {
-        Action   = "bedrock:InvokeModel",
-        Effect   = "Allow",
-        Resource = "arn:aws:bedrock:${var.aws_region}::foundation-model/amazon.titan-text-express-v1"
-      }
-    ]
-  })
-}
+        sns.publish(
+            TopicArn=os.environ["SNS_TOPIC_ARN"],
+            Subject="🚨 GuardDuty: Trojan:EC2/BlackholeTraffic Detected",
+            Message=readable_message
+        )
 
-resource "aws_iam_role_policy_attachment" "lambda_logs_attach" {
-  role       = aws_iam_role.lambda_exec_role.name
-  policy_arn = aws_iam_policy.lambda_logging_policy.arn
-}
+        return {
+            'statusCode': 200,
+            'body': f"Formatted alert sent to SNS topic for instance {instance_id}"
+        }
 
-resource "aws_iam_role_policy_attachment" "lambda_ai_services_attach" {
-  role       = aws_iam_role.lambda_exec_role.name
-  policy_arn = aws_iam_policy.lambda_ai_services_policy.arn
-}
+    except Exception as e:
+        print("Error:", str(e))
+        return {
+            'statusCode': 500,
+            'body': f"Error processing event: {str(e)}"
+        }
 
-# ==============================================================================
-# Lambda Function
-# ==============================================================================
-data "archive_file" "lambda_zip" {
-  type        = "zip"
-  source_dir  = "../lambda/"
-  output_path = "${path.module}/image_analyzer.zip"
-}
-
-resource "aws_lambda_function" "image_analyzer_lambda" {
-  filename      = data.archive_file.lambda_zip.output_path
-  function_name = "${var.project_name}-function"
-  role          = aws_iam_role.lambda_exec_role.arn
-  handler       = "image_analyzer.lambda_handler"
-  runtime       = "python3.9"
-  timeout       = 30
-  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-}
-
-# ==============================================================================
-# API Gateway (Simplified for Lambda Proxy)
-# ==============================================================================
-resource "aws_api_gateway_rest_api" "api" {
-  name        = "${var.project_name}-api"
-  description = "API for the Image Analyzer"
-}
-
-resource "aws_api_gateway_resource" "resource" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
-  path_part   = "analyze"
-}
-
-resource "aws_api_gateway_method" "method" {
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.resource.id
-  http_method   = "POST"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "integration" {
-  rest_api_id             = aws_api_gateway_rest_api.api.id
-  resource_id             = aws_api_gateway_resource.resource.id
-  http_method             = aws_api_gateway_method.method.http_method
-  integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.image_analyzer_lambda.invoke_arn
-}
-
-# This OPTIONS method is still needed for the browser's preflight request for CORS
-resource "aws_api_gateway_method" "options_method" {
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.resource.id
-  http_method   = "OPTIONS"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "options_integration" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.resource.id
-  http_method = aws_api_gateway_method.options_method.http_method
-  type        = "MOCK"
-
-  # The MOCK integration returns a success response with the necessary headers.
-  request_templates = {
-    "application/json" = "{\"statusCode\": 200}"
-  }
-}
-
-resource "aws_api_gateway_method_response" "options_response" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.resource.id
-  http_method = aws_api_gateway_method.options_method.http_method
-  status_code = "200"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = true,
-    "method.response.header.Access-Control-Allow-Methods" = true,
-    "method.response.header.Access-Control-Allow-Origin"  = true
-  }
-}
-
-resource "aws_api_gateway_integration_response" "options_integration_response" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.resource.id
-  http_method = aws_api_gateway_method.options_method.http_method
-  status_code = aws_api_gateway_method_response.options_response.status_code
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-    "method.response.header.Access-Control-Allow-Methods" = "'OPTIONS,POST'",
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-  }
-  depends_on = [aws_api_gateway_integration.options_integration]
-}
-
-# --- Deployment Resources ---
-
-resource "aws_lambda_permission" "api_gateway_permission" {
-  statement_id  = "AllowAPIGatewayInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.image_analyzer_lambda.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*/*"
-}
-
-resource "aws_api_gateway_deployment" "deployment" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-
-  # This ensures a new deployment happens when any part of the API changes.
-   triggers = {
-    redeployment = sha1(jsonencode([
-      aws_api_gateway_resource.resource.id,
-      aws_api_gateway_method.method.id,
-      aws_api_gateway_integration.integration.id,
-    ]))
-  }
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_api_gateway_stage" "stage" {
-  deployment_id = aws_api_gateway_deployment.deployment.id
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  stage_name    = "v1"
-}
-
-# ==============================================================================
-# S3 Bucket for Frontend Hosting (Modern Syntax)
-# ==============================================================================
-
-resource "random_id" "bucket_suffix" {
-  byte_length = 8
-}
-
-resource "aws_s3_bucket" "frontend_bucket" {
-  bucket = "${var.project_name}-frontend-${random_id.bucket_suffix.hex}"
-  force_destroy = true
-
-  tags = {
-    Name        = "${var.project_name}-frontend"
-    Environment = var.environment
-  }
-}
-
-resource "aws_s3_bucket_website_configuration" "frontend_website" {
-  bucket = aws_s3_bucket.frontend_bucket.id
-
-  index_document {
-    suffix = "index.html"
-  }
-
-  error_document {
-    key = "index.html"
-  }
-
-  depends_on = [aws_s3_bucket.frontend_bucket]
-}
-
-resource "aws_s3_bucket_public_access_block" "frontend_public_access" {
-  bucket                  = aws_s3_bucket.frontend_bucket.id
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-
-  depends_on = [aws_s3_bucket.frontend_bucket]
-}
-
-resource "aws_s3_bucket_policy" "frontend_policy" {
-  bucket = aws_s3_bucket.frontend_bucket.id
-
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect    = "Allow",
-        Principal = "*",
-        Action    = "s3:GetObject",
-        Resource  = "${aws_s3_bucket.frontend_bucket.arn}/*"
-      }
-    ]
-  })
-
-  depends_on = [aws_s3_bucket_public_access_block.frontend_public_access]
-}
-
-# ==============================================================================
-# Optional Output
-# ==============================================================================
-output "frontend_website_url" {
-  value = aws_s3_bucket_website_configuration.frontend_website.website_endpoint
-}
-```
-</details>
-
-This file will output the API Gateway URL and the S3 website endpoint after Terraform has finished deploying the resources.
-
-<details>
-<summary><code>terraform/outputs.tf</code></summary>
-
-```tf
-output "api_gateway_url" {
-  description = "The invoke URL of the deployed API"
-  value       = aws_api_gateway_stage.stage.invoke_url
-}
-
-output "lambda_function_name" {
-  description = "The name of the Lambda function"
-  value       = aws_lambda_function.image_analyzer_lambda.function_name
-}
-
-output "frontend_bucket_name" {
-  description = "The name of the S3 bucket hosting the frontend"
-  value       = aws_s3_bucket.frontend_bucket.bucket
-}
-
-output "frontend_website_endpoint" {
-  description = "The website endpoint of the frontend S3 bucket"
-  value       = aws_s3_bucket_website_configuration.frontend_website.website_endpoint
-}
-```
-</details>
-
-
-## ➡️ Step 4 - Frontend Development
-
-Now we'll create the user interface that interacts with our backend.
-
-This is the main HTML file for our application.
-
-<details>
-<summary><code>frontend/index.html</code></summary>
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Image Analyzer</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>AI-Powered Image Analyzer</h1>
-            <p>Upload an image to detect labels with AWS Rekognition and get a description from Amazon Bedrock.</p>
-        </header>
-
-        <main>
-            <div class="upload-area">
-                <input type="file" id="imageUpload" accept="image/png, image/jpeg">
-                <label for="imageUpload" id="uploadLabel">
-                    <span>Click to select an image</span>
-                </label>
-                <button id="analyzeBtn" disabled>Analyze Image</button>
-            </div>
-
-            <div id="preview">
-                <img id="imagePreview" src="#" alt="Image Preview">
-            </div>
-
-            <div id="results" class="hidden">
-                <h2>Analysis Results</h2>
-                <div id="loader" class="loader"></div>
-                <div id="resultContent">
-                     <h3>AI Generated Description:</h3>
-                     <p id="description"></p>
-                     <h3>Detected Labels:</h3>
-                     <div id="labels"></div>
-                </div>
-            </div>
-        </main>
-
-        <footer>
-            <p>Built with AWS Rekognition, Bedrock & Terraform</p>
-        </footer>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
 ```
 </details>
 
