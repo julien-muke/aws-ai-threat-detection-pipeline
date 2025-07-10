@@ -77,114 +77,29 @@ How to do it:
 
 ✅ GuardDuty is now scanning your account for threats like credential theft, unusual login behavior, port scanning, and more.
 
-We'll start by writing the Python code for our Lambda function. This function will be the brains of our operation.
+## ➡️ Step 3 - Set Up an SNS Topic for Notifications
 
-<details>
-<summary><code>lambda/image_analyzer.py</code></summary>
+Next, we'll create an SNS topic to send alerts to your security team.
 
-```py
-import json
-import boto3
-import base64
+How to do it:
 
-# Initialize AWS clients
-rekognition = boto3.client('rekognition')
-bedrock_runtime = boto3.client('bedrock-runtime')
+1. Go to the Amazon SNS console.
+2.In the left navigation pane, click Topics, then Create topic.
 
-def lambda_handler(event, context):
-    """
-    This Lambda function analyzes an image provided as a base64 encoded string.
-    It uses Rekognition to detect labels and Bedrock (Titan) to generate a
-    human-readable description.
-    """
-    try:
-        # Get the base64 encoded image from the request body
-        body = json.loads(event.get('body', '{}'))
-        image_base64 = body.get('image')
+Choose the Standard type.
+Give your topic a name (e.g., GuardDuty-Threat-Alerts).
 
-        if not image_base64:
-            return {
-                'statusCode': 400,
-                'body': json.dumps({'error': 'No image provided in the request body.'})
-            }
+Scroll down and click Create topic.
 
-        # Decode the base64 string
-        image_bytes = base64.b64decode(image_base64)
+Once the topic is created, you need to create a subscription. Click Create subscription.
 
-        # 1. Analyze image with AWS Rekognition
-        rekognition_response = rekognition.detect_labels(
-            Image={'Bytes': image_bytes},
-            MaxLabels=10,
-            MinConfidence=80
-        )
-        labels = [label['Name'] for label in rekognition_response['Labels']]
+For Protocol, choose Email (or another preferred method).
 
-        if not labels:
-             return {
-                'statusCode': 200,
-                'body': json.dumps({
-                    'labels': [],
-                    'description': "Could not detect any labels with high confidence. Please try another image."
-                })
-            }
+For Endpoint, enter the email address of your security team.
 
-        # 2. Enhance results with Amazon Bedrock
-        # Create a prompt for the Titan model
-        prompt = f"Based on the following labels detected in an image: {', '.join(labels)}. Please generate a single, descriptive sentence about the image."
-
-        # Configure the payload for the Bedrock model
-        bedrock_payload = {
-            "inputText": prompt,
-            "textGenerationConfig": {
-                "maxTokenCount": 100,
-                "stopSequences": [],
-                "temperature": 0.7,
-                "topP": 0.9
-            }
-        }
-
-        # Invoke the Bedrock model
-        bedrock_response = bedrock_runtime.invoke_model(
-            body=json.dumps(bedrock_payload),
-            modelId='amazon.titan-text-express-v1',
-            contentType='application/json',
-            accept='application/json'
-        )
-
-        response_body = json.loads(bedrock_response['body'].read())
-        description = response_body['results'][0]['outputText'].strip()
-
-        # 3. Return the results
-        return {
-            'statusCode': 200,
-            'headers': {
-                'Access-Control-Allow-Origin': '*', # Enable CORS
-                'Access-Control-Allow-Headers': 'Content-Type',
-                'Access-Control-Allow-Methods': 'OPTIONS,POST'
-            },
-            'body': json.dumps({
-                'labels': labels,
-                'description': description
-            })
-        }
-
-    except Exception as e:
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'error': str(e)})
-        }
-```
-</details>
-
-⚠️Note: This script uses the `boto3` AWS SDK for Python. It will perform the following actions:
-1. Receive a base64-encoded image from the API Gateway.
-2. Decode the image.
-3. Send the image to Amazon Rekognition to detect labels.
-4. Create a prompt with these labels and send it to Amazon Bedrock.
-5. Return the labels and the AI-generated description.
+Click Create subscription.
 
 
-## ➡️ Step 3 - Infrastructure as Code with Terraform
 
 Now, let's define all the AWS resources needed for our backend using Terraform.
 
