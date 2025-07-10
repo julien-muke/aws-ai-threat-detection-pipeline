@@ -1,14 +1,14 @@
-# ![aws](https://github.com/julien-muke/Search-Engine-Website-using-AWS/assets/110755734/01cd6124-8014-4baa-a5fe-bd227844d263) Build a real-time AI-powered threat detection and response system on AWS using GuardDuty, SNS, and Lambda.
+# ![aws](https://github.com/julien-muke/Search-Engine-Website-using-AWS/assets/110755734/01cd6124-8014-4baa-a5fe-bd227844d263) Real-Time Threat Detection on AWS with AI | GuardDuty, CloudTrail, Lambda & SNS
 
 <div align="center">
 
   <br />
     <a href="https://youtu.be/o4fNDCAqyzM" target="_blank">
-      <img src="https://github.com/user-attachments/assets/20b36884-c4ef-4d0e-8add-200cb2d378d9" alt="Project Banner">
+      <img src="https://github.com/user-attachments/assets/d9a86018-563e-46a3-a7f3-6c6bb3514842" alt="Project Banner">
     </a>
   <br />
 
-<h3 align="center">🚨 Real-time AI-powered threat detection and response system on AWS using GuardDuty, SNS, and Lambda. </h3>
+<h3 align="center">Build a Real-time AI-powered threat detection and response system on AWS using GuardDuty, SNS, and Lambda. </h3>
 
    <div align="center">
      Build this hands-on demo step by step with my detailed tutorial on <a href="http://www.youtube.com/@julienmuke/videos" target="_blank"><b>Julien Muke</b></a> YouTube. Feel free to subscribe 🔔!
@@ -27,31 +27,20 @@ like these step-by-step in a beginner-friendly manner!
 
 ## <a name="introduction">🤖 Introduction</a>
 
-Welcome to this exciting hands-on project where we build a complete AI image analysis system on AWS, combining computer vision and generative AI in a fully serverless architecture, all deployed and managed using Terraform.
-
-
-## <a name="steps">🔎 Overview </a>
- 
-In this project, we’ll use Amazon Rekognition to detect objects, scenes, and concepts in an image, then pass those results to Amazon Bedrock (Titan model) to generate a human-readable summary. The frontend allows users to upload images and get insightful, AI-generated descriptions, all with zero servers to manage!
+In this hands-on project, we'll build a real-time AI-powered threat detection and response system on AWS using GuardDuty, SNS, and Lambda. This setup will enable you to automatically detect threats and take immediate action, significantly improving your security posture. Simulate abnormal behavior in an AWS environment and use AI-powered tools to detect, respond, and notify you in real time.
 
 ## <a name="steps">🛠 Tech Stack: </a>
 
-• Amazon Rekognition: Detects objects, scenes, and labels in images<br>
-• Amazon Bedrock (Titan): Converts labels into descriptive text using generative AI<br>
-• AWS Lambda (Python): Processes requests and orchestrates AI services<br>
-• Amazon API Gateway: Exposes our backend via a RESTful API<br>
-• Amazon S3: Hosts a static frontend (HTML/CSS/JS)<br>
-• Terraform: Provisions the full infrastructure as code (IaC)<br>
+This project showcases a real-time AI-powered security pipeline using:
 
-## <a name="pre">📋 Prerequisites </a>
+- ✅ Amazon GuardDuty (threat detection)
+- ✅ Amazon EventBridge (routing)
+- ✅ AWS Lambda (automated response)
+- ✅ Amazon SNS (alert notifications)
 
-Before you begin, ensure you have the following set up:
- 
-• **[AWS Account](https://aws.amazon.com/resources/create-account/)**: An active AWS account with administrative privileges to create the necessary resources.<br>
-• **[AWS CLI](https://docs.aws.amazon.com/streams/latest/dev/setup-awscli.html)**: The AWS Command Line Interface installed and configured with your credentials.<br>
-• **[Terraform](https://developer.hashicorp.com/terraform/install)**: Terraform installed on your local machine. You can verify the installation by running `terraform --version`<br>
-• **[Node.js, npm](https://nodejs.org/en/download) and [Python](https://www.python.org/downloads/)**: Required for managing frontend dependencies if you choose to expand the project.<br>
-• **Model Access in [Amazon Bedrock](https://aws.amazon.com/bedrock/)**: You must enable access to the foundation models you intend to use. For this project, navigate to the Amazon Bedrock console, go to Model access, and request access to Titan Image Generator G1.<br>
+
+Simulated GuardDuty findings (like `Trojan:EC2/BlackholeTraffic`) trigger SNS alerts and a Lambda function that sends a clean, human-readable security alert.
+
 
 ## ➡️ Step 1 - Project Structure
 
