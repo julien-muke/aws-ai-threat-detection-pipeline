@@ -241,7 +241,7 @@ We will use the AWS CLI to generate a sample GuardDuty finding that simulates a 
 ```bash
 aws guardduty create-sample-findings \
 --detector-id YOUR_DETECTOR_ID \
---finding-types "UnauthorizedAccess:IAMUser/AnomalousBehavior"
+--finding-types "Trojan:EC2/BlackholeTraffic"
 ```
 
 This command tells GuardDuty to create a sample finding that mimics anomalous behavior from an IAM user, which will trigger our EventBridge rule.
