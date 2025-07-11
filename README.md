@@ -90,7 +90,7 @@ How to do it:
 5. Scroll down and click Create topic.
 6. Once the topic is created, you need to create a subscription. Click Create subscription.
 7. For Protocol, choose Email (or another preferred method).
-8. For Endpoint, enter the email address of your security team.
+8. For Endpoint, enter your email address
 9. Click Create subscription.
 
 
@@ -258,7 +258,7 @@ Now, let's verify that each component of our project worked as expected.
 <br>• Navigate to the Lambda console and select your GuardDuty-Automated-Response function.
 <br>• Click on the Monitor tab, and then View CloudWatch logs.
 
-➕ Optional Upgrades Create Isolation Lambda
+➕ Optional Upgrades: Create Isolation Lambda
 
 You can add a secure, clickable link in your SNS message that lets you trigger a Lambda function to isolate or stop the EC2 instance that GuardDuty flagged.
 
