@@ -227,48 +227,25 @@ Now, we'll create an EventBridge rule to trigger our Lambda function and send a 
 
 11. Click Next and then Create rule.
 
+### Let's Test It!
 
-Now it's time to bring everything online.
+We will use the AWS CLI to generate a sample GuardDuty finding that simulates a threat from our test user. This is the most direct way to trigger the entire workflow.
 
-### 1. Deploy the Backend with Terraform
-
-• Navigate to the `terraform` directory in your terminal:
-
-```bash
-cd ai-image-recognition-terraform/terraform
-```
-
-• Initialize Terraform. This will download the necessary provider plugins.
+1. Open your terminal or command prompt that has the AWS CLI configured.
+2. Find your GuardDuty Detector ID:
+  <br>• Navigate to the GuardDuty console.
+  <br>• Click on Settings in the left sidebar.
+  <br>• Copy the Detector ID.
+3. Run the command: Replace `YOUR_DETECTOR_ID` with your actual values.
 
 ```bash
-terraform init
+aws guardduty create-sample-findings \
+--detector-id YOUR_DETECTOR_ID \
+--finding-types "UnauthorizedAccess:IAMUser/AnomalousBehavior"
 ```
 
-• Plan the deployment. This shows you what resources Terraform will create.
+This command tells GuardDuty to create a sample finding that mimics anomalous behavior from an IAM user, which will trigger our EventBridge rule.
 
-```bash
-terraform plan
-```
-
-• Apply the configuration to create the AWS resources. Type `yes` when prompted.
-
-```bash
-terraform apply
-```
-
-• After the deployment is complete, Terraform will display the outputs. Copy the `api_gateway_invoke_url`
-
-### 2. Configure and Deploy the Frontend
-
-• Open `frontend/script.js` in your text editor.<br>
-⚠️Important: You will need to replace `YOUR_API_GATEWAY_INVOKE_URL` with the actual URL you get from the Terraform output. Make sure to add `/analyze` to the end of the URL you copied.<br>
-• Now, upload the frontend files (`index.html`, `style.css`, and the updated `script.js`) to the S3 bucket created by Terraform. You can do this via the AWS Management Console or using the AWS CLI.<br>
-
-➖ Find your bucket name in the S3 console (it will be prefixed with `ai-image-analyzer-frontend-hosting`).<br>
-➖ Upload the three files from your `frontend` directory into the bucket.<br>
-➖ Ensure the files have public read access. Terraform attempts to set this, but you may need to confirm.<br>
-
-### 3. Test the Application
 
 1. Go to your S3 bucket, choose on index.html then open Object URL in your web browser.
 2. You should see the "AI Image Analyzer" interface.
