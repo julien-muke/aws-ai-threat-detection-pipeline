@@ -258,22 +258,11 @@ Now, let's verify that each component of our project worked as expected.
 <br>• Navigate to the Lambda console and select your GuardDuty-Automated-Response function.
 <br>• Click on the Monitor tab, and then View CloudWatch logs.
 
-1. Go to your S3 bucket, choose on index.html then open Object URL in your web browser.
-2. You should see the "AI Image Analyzer" interface.
-3. Click the upload area, select a JPG or PNG image from your computer.
-4. The image preview will appear, and the "Analyze Image" button will be enabled.
-5. Click the button. The loader will appear while the backend processes the image.
-6. After a few moments, the AI-generated description and the list of detected labels will be displayed.
+➕ Optional Upgrades Create Isolation Lambda
 
-![Image](https://github.com/user-attachments/assets/f5130fef-d343-40a7-998b-bc065078eb2c)
+You can add a secure, clickable link in your SNS message that lets you trigger a Lambda function to isolate or stop the EC2 instance that GuardDuty flagged.
+
 
 ## 🗑️ Cleaning Up
 
 When you are finished with the project, you can destroy all the created AWS resources to avoid incurring further costs.
-
-1. Navigate back to the terraform directory.
-2. Run the destroy command:
-
-```bash
-terraform destroy
-```
