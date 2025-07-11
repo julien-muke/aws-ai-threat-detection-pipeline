@@ -244,7 +244,7 @@ aws guardduty create-sample-findings \
 --finding-types "Trojan:EC2/BlackholeTraffic"
 ```
 
-This command tells GuardDuty to create a sample finding that mimics anomalous behavior from an IAM user, which will trigger our EventBridge rule.
+This command tells GuardDuty to create a sample finding that mimics anomalous behavior from an EC2 instance that is making outbound connections to known malware command-and-control (C2) domains or IPs, which will trigger our EventBridge rule.
 
 ### Verification - Check the Results ✅
 
@@ -257,10 +257,6 @@ Now, let's verify that each component of our project worked as expected.
 2. Check the Lambda Function Logs
 <br>• Navigate to the Lambda console and select your GuardDuty-Automated-Response function.
 <br>• Click on the Monitor tab, and then View CloudWatch logs.
-
-➕ Optional Upgrades: Create Isolation Lambda
-
-You can add a secure, clickable link in your SNS message that lets you trigger a Lambda function to isolate or stop the EC2 instance that GuardDuty flagged.
 
 
 ## 🗑️ Cleaning Up
