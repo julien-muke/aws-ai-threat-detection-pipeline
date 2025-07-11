@@ -201,10 +201,9 @@ Now, we'll create an EventBridge rule to trigger our Lambda function and send a 
 6. Click Next.
 7. Event source: AWS events or EventBridge partner events
 8. Event pattern:
-
-<br>• Event source: AWS services
-<br>• AWS service: GuardDuty
-<br>• Event type: GuardDuty Finding
+  <br>• Event source: AWS services
+  <br>• AWS service: GuardDuty
+  <br>• Event type: GuardDuty Finding
 
 ```json
 {
@@ -222,6 +221,12 @@ Now, we'll create an EventBridge rule to trigger our Lambda function and send a 
       <br>• Select a target: Lambda function
       <br>• Function: Select the `GuardDuty-Automated-Response` function.
 <br> Add another target:
+      <br>• Target types: AWS service
+      <br>• Select a target: SNS topic
+      <br>• Topic: Select the `GuardDuty-Threat-Alerts` topic.
+
+11. Click Next and then Create rule.
+
 
 Now it's time to bring everything online.
 
