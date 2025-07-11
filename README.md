@@ -33,11 +33,11 @@ In this hands-on project, we'll build a real-time AI-powered threat detection an
 
 This project showcases a real-time AI-powered security pipeline using:
 
-- ✅ Amazon CloudTrail (log API activity)
-- ✅ Amazon GuardDuty (AI-based threat detection)
-- ✅ Amazon EventBridge (trigger on GuardDuty findings)
-- ✅ AWS Lambda (automated response)
-- ✅ Amazon SNS (send real-time email/SMS alerts)
+- Amazon CloudTrail (log API activity)
+- Amazon GuardDuty (AI-based threat detection)
+- Amazon EventBridge (trigger on GuardDuty findings)
+- AWS Lambda (automated response)
+- Amazon SNS (send real-time email/SMS alerts)
 
 
 Simulated GuardDuty findings, trigger SNS alerts and a Lambda function that sends a clean, human-readable security alert.
@@ -47,7 +47,6 @@ Simulated GuardDuty findings, trigger SNS alerts and a Lambda function that send
 ✅ An AWS account<br>
 ✅ AWS CLI configured<br>
 ✅ IAM permissions to create: CloudTrail, GuardDuty, SNS, EventBridge, Lambda<br>
-✅ Optional: VPN or proxy to simulate foreign IP access<br>
 
 
 ## ➡️ Step 1 - Enable CloudTrail
