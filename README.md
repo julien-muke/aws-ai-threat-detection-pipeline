@@ -246,6 +246,17 @@ aws guardduty create-sample-findings \
 
 This command tells GuardDuty to create a sample finding that mimics anomalous behavior from an IAM user, which will trigger our EventBridge rule.
 
+### Verification - Check the Results ✅
+
+Now, let's verify that each component of our project worked as expected.
+
+1. Check for the SNS Notification
+<br>• Go to your email inbox that you subscribed to the SNS topic.
+<br>• You should receive an email with a subject line like: 🚨 `Trojan:EC2/BlackholeTraffic`
+
+2. Check the Lambda Function Logs
+<br>• Navigate to the Lambda console and select your GuardDuty-Automated-Response function.
+<br>• Click on the Monitor tab, and then View CloudWatch logs.
 
 1. Go to your S3 bucket, choose on index.html then open Object URL in your web browser.
 2. You should see the "AI Image Analyzer" interface.
