@@ -72,7 +72,7 @@ How to do it:
 
 1. Go to the GuardDuty console
 2. Click “Enable GuardDuty”
-3. Wait 5–10 mins — it starts analyzing logs.
+3. Wait 5–10 mins, it starts analyzing logs.
 
 ✅ GuardDuty is now scanning your account for threats like credential theft, unusual login behavior, port scanning, and more.
 
@@ -254,7 +254,7 @@ Now, let's verify that each component of our project worked as expected.
 <br>• You should receive an email with a subject line like: 🚨 `Trojan:EC2/BlackholeTraffic`
 
 2. Check the Lambda Function Logs
-<br>• Navigate to the Lambda console and select your GuardDuty-Automated-Response function.
+<br>• Navigate to the Lambda console and select your `GuardDuty-Automated-Response` function.
 <br>• Click on the Monitor tab, and then View CloudWatch logs.
 
 
