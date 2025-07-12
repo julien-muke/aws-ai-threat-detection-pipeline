@@ -109,7 +109,7 @@ Go to the IAM console and create a new role:
 1. Go to the Lambda console and click Create function.
 2. Select Author from scratch.
 3. Function name: `GuardDuty-Automated-Response`
-4. Runtime: Python `3.9`
+4. Runtime: Python `3.13`
 5. Architecture: `x86_64`
 6. Permissions: Choose Use an existing role and select the IAM role you just created.
 7. Click Create function.
