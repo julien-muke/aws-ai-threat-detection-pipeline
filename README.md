@@ -235,7 +235,7 @@ We will use the AWS CLI to generate a sample GuardDuty finding that simulates a 
   <br>• Navigate to the GuardDuty console.
   <br>• Click on Settings in the left sidebar.
   <br>• Copy the Detector ID.
-3. Run the command: Replace `YOUR_DETECTOR_ID` with your actual values.
+3. Run the command: Replace `YOUR_DETECTOR_ID` with your actual Detector ID .
 
 ```bash
 aws guardduty create-sample-findings \
