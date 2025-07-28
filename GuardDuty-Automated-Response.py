@@ -39,7 +39,7 @@ Isolate or stop the EC2 instance and investigate for malware or unauthorized tra
 
         sns.publish(
             TopicArn=os.environ["SNS_TOPIC_ARN"],
-            Subject="🚨 GuardDuty: Trojan:EC2/BlackholeTraffic Detected",
+            Subject="🚨 GuardDuty Alert: EC2 Threat Detected",
             Message=readable_message
         )
 
