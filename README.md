@@ -209,7 +209,12 @@ Isolate or stop the EC2 instance and investigate for malware or unauthorized tra
 }
 ```
 
-Note: Replace `your-region` `your-account-id` `your-topic-name` with your actual values.
+⚠️ Note: Replace `your-region` `your-account-id` `your-topic-name` with your actual values.
+
+7. Click Next, give it a name like `AllowSNSPublish`
+8. Click Create policy
+
+Now this role can successfully publish to your SNS topic!
 
 ## ➡️ Step 5 - Integrate Services with Amazon EventBridge
 
@@ -242,10 +247,6 @@ Now, we'll create an EventBridge rule to trigger our Lambda function and send a 
       <br>• Target types: AWS service
       <br>• Select a target: Lambda function
       <br>• Function: Select the `GuardDuty-Automated-Response` function.
-<br> Add another target:
-      <br>• Target types: AWS service
-      <br>• Select a target: SNS topic
-      <br>• Topic: Select the `GuardDuty-Threat-Alerts` topic.
 
 11. Click Next and then Create rule.
 
