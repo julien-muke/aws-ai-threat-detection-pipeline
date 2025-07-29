@@ -187,6 +187,29 @@ Isolate or stop the EC2 instance and investigate for malware or unauthorized tra
 <br>• Key: `SNS_TOPIC_ARN`
 <br>• Value: Paste the ARN of the SNS topic you created in Step 2.
 
+- Attach a Policy to Allow SNS:Publish:
+
+1. In your Lambda function in the AWS Console
+2. Go to Configuration > Permissions
+3. Click the role name `GuardDuty-Lambda-Role`  this will take you to the IAM Role details.
+4. From the IAM Role page, "Add permissions" > "Attach policies"
+5. Choose “Create inline policy” (for full control)
+6. Create and Attach Inline Policy, use the following JSON in the JSON tab:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "sns:Publish",
+      "Resource": "arn:aws:sns:your-region:your-account-id:your-topic-name"
+    }
+  ]
+}
+```
+
+Note: Replace `your-region` `your-account-id` `your-topic-name` with your actual values.
 
 ## ➡️ Step 5 - Integrate Services with Amazon EventBridge
 
