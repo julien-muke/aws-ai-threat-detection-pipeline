@@ -104,7 +104,7 @@ Go to the IAM console and create a new role:
 2. On the permissions screen, add the `AWSLambdaBasicExecutionRole` policy. This allows our function to write logs to CloudWatch, which is essential for debugging.
 3. Name the role something like `GuardDuty-Lambda-Role` and create it.
 
-- Create the Lambda Function:
+🔹 Create the Lambda Function:
 
 1. Go to the Lambda console and click Create function.
 2. Select Author from scratch.
@@ -180,14 +180,14 @@ Isolate or stop the EC2 instance and investigate for malware or unauthorized tra
 ```
 </details>
 
-- Configure Environment Variables:
+🔹 Configure Environment Variables:
 
 1. In your Lambda function's configuration, go to the Environment variables tab and click Edit.
 2. Add a new variable:
 <br>• Key: `SNS_TOPIC_ARN`
 <br>• Value: Paste the ARN of the SNS topic you created in Step 2.
 
-- Attach a Policy to Allow SNS:Publish:
+🔹 Attach a Policy to Allow SNS:Publish:
 
 1. In your Lambda function in the AWS Console
 2. Go to Configuration > Permissions
@@ -222,7 +222,7 @@ Now, we'll create an EventBridge rule to trigger our Lambda function and send a 
 
 1. Go to the Amazon EventBridge console.
 2. In the left navigation pane, click Rules, then Create rule.
-3. Name: GuardDuty-IAM-Threat-Rule
+3. Name: GuardDuty-EC2-Threat-Rule
 4. Event bus: default
 5. Rule type: Rule with an event pattern
 6. Click Next.
@@ -250,7 +250,7 @@ Now, we'll create an EventBridge rule to trigger our Lambda function and send a 
 
 11. Click Next and then Create rule.
 
-### Let's Test It!
+### 🏆 Let's Test It!
 
 We will use the AWS CLI to generate a sample GuardDuty finding that simulates a threat from our test user. This is the most direct way to trigger the entire workflow.
 
