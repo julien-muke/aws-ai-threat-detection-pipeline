@@ -72,7 +72,7 @@ How to do it:
 
 1. Go to the GuardDuty console
 2. Click “Enable GuardDuty”
-3. Wait 5–10 mins, it starts analyzing logs.
+3. Wait 5-10 mins, it starts analyzing logs.
 
 ✅ GuardDuty is now scanning your account for threats like credential theft, unusual login behavior, port scanning, and more.
 
@@ -97,7 +97,7 @@ How to do it:
 
 We'll create a Lambda function that takes the complicated JSON output from GuardDuty and turns it into a simple message.
 
-- Create the Lambda IAM Role:
+🔹 Create the Lambda IAM Role:
 
 Go to the IAM console and create a new role:
 1. For the trusted entity, select AWS service, and for the use case, choose Lambda.
@@ -222,7 +222,7 @@ Now, we'll create an EventBridge rule to trigger our Lambda function and send a 
 
 1. Go to the Amazon EventBridge console.
 2. In the left navigation pane, click Rules, then Create rule.
-3. Name: GuardDuty-EC2-Threat-Rule
+3. Give it a name like `GuardDuty-EC2-Threat-Rule`
 4. Event bus: default
 5. Rule type: Rule with an event pattern
 6. Click Next.
@@ -267,7 +267,7 @@ aws guardduty create-sample-findings \
 --finding-types "Trojan:EC2/BlackholeTraffic"
 ```
 
-This command tells GuardDuty to create a sample finding that mimics anomalous behavior from an EC2 instance that is making outbound connections to known malware command-and-control (C2) domains or IPs, which will trigger our EventBridge rule.
+This command tells GuardDuty to create a sample finding that mimics anomalous behavior from an EC2 instance that is making outbound connections to known malware, which will trigger our EventBridge rule.
 
 ### Verification - Check the Results ✅
 
