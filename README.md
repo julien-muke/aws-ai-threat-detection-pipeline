@@ -283,7 +283,6 @@ Now, let's verify that each component of our project worked as expected.
    <br>`Recon:EC2/Portscan`
    <br>`Trojan:EC2/BlackholeTraffic`
    <br>`UnauthorizedAccess:EC2/TorClient`
-
 <br>• Severity Type: `Medium`
 
 3. Check the Lambda Function Logs
