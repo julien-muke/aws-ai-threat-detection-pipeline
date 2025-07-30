@@ -277,7 +277,17 @@ Now, let's verify that each component of our project worked as expected.
 <br>• Go to your email inbox that you subscribed to the SNS topic.
 <br>• You should receive an email with a subject line like: 🚨 `Trojan:EC2/BlackholeTraffic`
 
-2. Check the Lambda Function Logs
+2. Check GuardDuty Findings
+<br>• Go to GuardDuty Console, you'll now see a full list of GuardDuty findings, each row representing a detection event:
+<br>1. Finding Type:
+   <br>• `Recon:EC2/Portscan`
+   <br>• `Trojan:EC2/BlackholeTraffic`
+   <br>• `UnauthorizedAccess:EC2/TorClient`
+
+<br>2. Severity Type:
+   <br>• `Medium`
+
+3. Check the Lambda Function Logs
 <br>• Navigate to the Lambda console and select your `GuardDuty-Automated-Response` function.
 <br>• Click on the Monitor tab, and then View CloudWatch logs.
 
