@@ -57,9 +57,8 @@ How to do it:
 
 1. Go to the CloudTrail console
 2. If it’s not already enabled: Click “Create trail”
-3. Choose “Management events” → enable Read and Write events
-4. Choose to log to an S3 bucket (create a new one if needed)
-5. Leave Data events and Insights off (not needed here)
+3. Choose “Management events”
+4. Choose to log to an S3 bucket
 6. Click “Create trail”
 
 ✅ Now your account logs all actions taken by users, roles, and services.
