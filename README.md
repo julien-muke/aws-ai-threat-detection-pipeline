@@ -77,20 +77,20 @@ How to do it:
 
 ## ➡️ Step 3 - Set Up an SNS Topic for Notifications
 
-Next, we'll create an SNS topic to send alerts to your security team.
+Next, we'll create an SNS topic to send alerts to you or your security team whenever a threat is detected.
 
 How to do it:
 
-1. Go to the Amazon SNS console.
-2. In the left navigation pane, click Topics, then Create topic.
-3. Choose the Standard type.
-4. Give your topic a name `GuardDuty-Threat-Alerts`
-5. Scroll down and click Create topic.
-6. Once the topic is created, you need to create a subscription. Click Create subscription.
-7. For Protocol, choose Email (or another preferred method).
-8. For Endpoint, enter your email address
-9. Click Create subscription.
+1. Go to Amazon SNS → Topics → Create topic
+2. Type: Standard
+3. Name: `GuardDuty-Threat-Alerts`
+4. Click Create topic
+5. Click “Create subscription”
+- Protocol: Email
+- Endpoint: your email address
+6. Confirm the email by clicking the link in your inbox
 
+✅ SNS is now ready to send you alerts.
 
 ## ➡️ Step 4 - Create a Lambda Function - Our Alert Processor
 
