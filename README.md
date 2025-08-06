@@ -88,7 +88,10 @@ How to do it:
 5. Click “Create subscription”
 - Protocol: Email
 - Endpoint: your email address
-6. Confirm the email by clicking the link in your inbox
+6. Confirm the email by coying the link in your inbox:
+- Copy the Confirm subscription URL
+- Go back to your subscription page, click on Confirm subscription button
+- Paste the URL in the dialog box, and click Confirm subscription.
 
 ✅ SNS is now ready to send you alerts.
 
