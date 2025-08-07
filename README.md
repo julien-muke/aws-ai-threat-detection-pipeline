@@ -277,7 +277,21 @@ Now, let's verify that each component of our project worked as expected.
 
 1. Check for the SNS Notification
 <br>• Go to your email inbox that you subscribed to the SNS topic.
-<br>• You should receive an email with a subject line like: 🚨 `Trojan:EC2/BlackholeTraffic`
+<br>📬 You should instantly receive an alert email that looks like this:
+
+```bash
+🚨 GuardDuty Alert: Threat Detected
+
+🔍 Type: Trojan:EC2/BlackholeTraffic
+💡 Description: The EC2 instance is communicating with a blackholed IP...
+
+🖥 Instance ID: i-1234567890abcdef
+🌐 Public IP: 198.51.100.10
+📍 Region: us-east-1
+
+🧠 Recommendation:
+Isolate or stop the EC2 instance and investigate for malware or...
+```
 
 2. Check GuardDuty Findings
 <br>• Go to GuardDuty Console, you'll now see a full list of GuardDuty findings, each row representing a detection event:
