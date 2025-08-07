@@ -3,7 +3,7 @@
 <div align="center">
 
   <br />
-    <a href="https://youtu.be/o4fNDCAqyzM" target="_blank">
+    <a href="https://youtu.be/if5gMxb2LSM" target="_blank">
       <img src="https://github.com/user-attachments/assets/f2592643-7018-4932-8738-495e94505c86" alt="Project Banner">
     </a>
   <br />
@@ -23,7 +23,7 @@ channel, <a href="http://www.youtube.com/@julienmuke/videos" target="_blank"><b>
 If you prefer visual learning, this is the perfect resource for you. Follow my tutorial to learn how to build projects
 like these step-by-step in a beginner-friendly manner!
 
-<a href="https://youtu.be/o4fNDCAqyzM" target="_blank"><img src="https://github.com/sujatagunale/EasyRead/assets/151519281/1736fca5-a031-4854-8c09-bc110e3bc16d" /></a>
+<a href="https://youtu.be/if5gMxb2LSM" target="_blank"><img src="https://github.com/sujatagunale/EasyRead/assets/151519281/1736fca5-a031-4854-8c09-bc110e3bc16d" /></a>
 
 ## <a name="introduction">🤖 Introduction</a>
 
@@ -187,9 +187,9 @@ Isolate or stop the EC2 instance and investigate for malware or unauthorized tra
 1. In your Lambda function's configuration, go to the Environment variables tab and click Edit.
 2. Add a new variable:
 <br>• Key: `SNS_TOPIC_ARN`
-<br>• Value: Paste the ARN of the SNS topic you created in Step 2.
+<br>• Value: Paste the ARN of the SNS topic you created in Step 3.
 
-🔹 Attach a Policy to Allow SNS:Publish:
+🔹 Attach a Policy to Allow SNS Publish:
 
 1. In your Lambda function in the AWS Console
 2. Go to Configuration > Permissions
