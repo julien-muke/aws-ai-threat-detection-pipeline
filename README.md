@@ -46,7 +46,6 @@ Simulated GuardDuty findings, trigger SNS alerts and a Lambda function that send
 
 ✅ An AWS account<br>
 ✅ AWS CLI configured<br>
-✅ IAM permissions to create: CloudTrail, GuardDuty, SNS, EventBridge, Lambda<br>
 
 
 ## ➡️ Step 1 - Enable CloudTrail
