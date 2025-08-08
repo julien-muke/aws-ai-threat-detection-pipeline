@@ -1,4 +1,4 @@
-# ![aws](https://github.com/julien-muke/Search-Engine-Website-using-AWS/assets/110755734/01cd6124-8014-4baa-a5fe-bd227844d263) Real-Time Threat Detection on AWS with AI | GuardDuty, CloudTrail, Lambda & SNS 🛡️
+# ![aws](https://github.com/julien-muke/Search-Engine-Website-using-AWS/assets/110755734/01cd6124-8014-4baa-a5fe-bd227844d263) Build a Real-Time Threat Detection on AWS with AI | GuardDuty, CloudTrail, Lambda & SNS 🛡️
 
 <div align="center">
 
